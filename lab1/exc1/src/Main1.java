@@ -1,5 +1,3 @@
-package com.company;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 
