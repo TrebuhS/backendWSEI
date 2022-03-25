@@ -4,7 +4,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
-public class Main5 {
+public class Main6 {
     public static void main(String[] args) {
         System.out.println(getLocalDate());
         System.out.println(getGlobalDate());
