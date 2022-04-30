@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,8 +17,8 @@ public class UserController {
     Map<Integer, UserEntity> users = new HashMap<>();
 
     @GetMapping("/users")
-    Map<Integer, UserEntity> getUsers() {
-        return users;
+    Collection<UserEntity> getUsers() {
+        return users.values();
     }
 
     @GetMapping("/users/{id}/get")
