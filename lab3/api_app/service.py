@@ -7,7 +7,6 @@ from api_app.serializers import UserModelSerializer
 
 
 class UsersService:
-
     def create_user(self, data):
         serializer = UserModelSerializer(data=data)
         if serializer.is_valid():
