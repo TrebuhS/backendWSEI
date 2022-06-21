@@ -1,5 +1,10 @@
 from fastapi import FastAPI
+from starlette.responses import RedirectResponse
+
+from .db.db import create_tables
 from .routers import users_router
+
+create_tables()
 
 app = FastAPI()
 v1 = FastAPI()

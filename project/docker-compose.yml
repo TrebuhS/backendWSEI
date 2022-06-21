@@ -19,6 +19,8 @@ services:
     environment:
       - DATABASE_URI=postgresql://users_db_username:users_db_password@users_db/users_db
       - TASKS_SERVICE_HOST_URL=http://tasks_service:8000/api/v1/tasks
+    depends_on:
+      - users_db
 
   users_db:
     image: postgres:12.1-alpine
