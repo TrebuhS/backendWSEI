@@ -25,3 +25,6 @@ class UsersService(BaseService):
     def get_user_by_email(self, user_email: str) -> ServiceResult:
         user = self.users_repository.get_user_by_email(user_email)
         return ServiceResult(user)
+
+    def get_user_by_token(self, token):
+        return 0
