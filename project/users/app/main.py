@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from starlette.responses import RedirectResponse
 
 from .db.db import create_tables
 from .routers import users_router
+from .shared.exceptions import AppExceptionCase, app_exception_handler
 
 create_tables()
 
@@ -12,3 +12,8 @@ v1 = FastAPI()
 v1.include_router(users_router.router, prefix="/users")
 
 app.mount("/api/v1", v1)
+
+
+@app.exception_handler(AppExceptionCase)
+async def custom_app_exception_handler(request, e):
+    return await app_exception_handler(request, e)

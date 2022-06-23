@@ -1,13 +1,11 @@
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordBearer
-from pydantic.decorator import wraps
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from starlette.requests import Request
 
 from app.models.users.user_create import UserCreate
-from app.models.users.user_details import User
 from app.repositories.users_repository import UsersRepository
-from app.services.users_service import UsersService
+from app.services.auth.auth_service import AuthService
+from app.services.users.users_service import UsersService
 from app.db.db import get_db
 from app.shared.app_request import AppRequest
 from app.shared.decorators.auth_required import auth_required
@@ -16,14 +14,10 @@ router = APIRouter()
 
 
 def get_users_service(db: Session = Depends(get_db)):
-    return UsersService(db, UsersRepository(db), OAuth2PasswordBearer(tokenUrl="/auth"))
-
-
-@router.get("/auth")
-async def verify_token(
-        service=Depends(get_users_service)
-):
-    return service.verify_token()
+    return UsersService(
+        db,
+        UsersRepository(db)
+    )
 
 
 @router.post("/")
@@ -36,7 +30,7 @@ def create_user(
 
 @router.get("/current")
 @auth_required
-def get_current_user(
+async def get_current_user(
         request: AppRequest
 ):
     return request.current_user
