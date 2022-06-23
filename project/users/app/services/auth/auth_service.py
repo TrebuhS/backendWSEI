@@ -33,10 +33,8 @@ class AuthService(BaseService):
         self.oauth = oauth
         self.crypt_helper = crypt_helper
 
-
-
     def login(self, form_data: OAuth2PasswordRequestForm):
-        user = self.users_repository.get_user_by_email(form_data.username)
+        user = self.__authenticate_user(form_data.username, form_data.password)
         if not user:
             return ServiceResult(AuthException.IncorrectCredentials())
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -48,23 +46,6 @@ class AuthService(BaseService):
             "access_token": access_token,
             "token_type": "bearer"
         })
-
-    def authenticate_user(self, password: str, user: User):
-        if not user:
-            return False
-        if not self.crypt_helper.verify_password(password, user.hashed_password):
-            return False
-        return user
-
-    def __create_access_token(self, data: dict, expires_delta: Union[timedelta, None] = None):
-        to_encode = data.copy()
-        if expires_delta:
-            expire = datetime.utcnow() + expires_delta
-        else:
-            expire = datetime.utcnow() + timedelta(minutes=15)
-        to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-        return encoded_jwt
 
     async def get_current_user(self):
         try:
@@ -79,3 +60,21 @@ class AuthService(BaseService):
         if not user:
             return ServiceResult(AuthException.WrongToken())
         return ServiceResult(user)
+
+    def __authenticate_user(self, username: str, password: str):
+        user = self.users_repository.get_user_by_email(username)
+        if not user:
+            return False
+        if not self.crypt_helper.verify_password(password, user.password):
+            return False
+        return user
+
+    def __create_access_token(self, data: dict, expires_delta: Union[timedelta, None] = None):
+        to_encode = data.copy()
+        if expires_delta:
+            expire = datetime.utcnow() + expires_delta
+        else:
+            expire = datetime.utcnow() + timedelta(minutes=15)
+        to_encode.update({"exp": expire})
+        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        return encoded_jwt

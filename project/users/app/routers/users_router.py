@@ -9,6 +9,7 @@ from app.services.users.users_service import UsersService
 from app.db.db import get_db
 from app.shared.app_request import AppRequest
 from app.shared.decorators.auth_required import auth_required
+from app.shared.helpers.crypt_helper import CryptHelper
 
 router = APIRouter()
 
@@ -16,7 +17,8 @@ router = APIRouter()
 def get_users_service(db: Session = Depends(get_db)):
     return UsersService(
         db,
-        UsersRepository(db)
+        UsersRepository(db),
+        CryptHelper()
     )
 
 
