@@ -19,4 +19,6 @@ class User(Base):
         secondary=user_friends,
         primaryjoin=id == user_friends.c.friend_a_id,
         secondaryjoin=id == user_friends.c.friend_b_id,
+        lazy="joined",
+        join_depth=1
     )
