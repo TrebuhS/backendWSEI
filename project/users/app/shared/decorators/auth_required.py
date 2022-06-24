@@ -1,20 +1,17 @@
-from pydantic.decorator import wraps
+from fastapi import Depends
+from sqlalchemy.orm import Session
 
-from app.models.users.user_details import User
+from app.db.db import get_db
+from app.routers.auth_router import get_auth_service
+from app.services.auth.auth_exception import AuthException
 from app.shared.app_request import AppRequest
+from app.shared.service_result import handle_result, ServiceResult
 
 
-def auth_required(func):
-    @wraps(func)
-    async def wrapper(request: AppRequest = None, *args, **kwargs):
-        if request:
-            request.current_user = User(
-                id=1,
-                first_name="first",
-                last_name="last",
-                email="email",
-                password="password"
-            )
-            return await func(request, *args, **kwargs)
-        return await func(*args, **kwargs)
-    return wrapper
+def auth_current_user(request: AppRequest, db: Session = Depends(get_db)):
+    auth_service = get_auth_service(db)
+    user_result = auth_service.handle_token_verification(request)
+    if not user_result.success:
+        raise AuthException.WrongToken()
+    return user_result.value
+

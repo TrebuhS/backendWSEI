@@ -1,10 +1,13 @@
 from typing import Union
 
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from pydantic.validators import timedelta, datetime
 from sqlalchemy.orm import Session
+from starlette.requests import Request
 
+from app.db.db import get_db
 from app.db.tables.user import User
 from app.models.auth.token_data import TokenData
 from app.repositories.users_repository import UsersRepository
@@ -33,13 +36,13 @@ class AuthService(BaseService):
         self.oauth = oauth
         self.crypt_helper = crypt_helper
 
-    def login(self, form_data: OAuth2PasswordRequestForm):
+    def login(self, form_data: OAuth2PasswordRequestForm) -> ServiceResult:
         user = self.__authenticate_user(form_data.username, form_data.password)
         if not user:
             return ServiceResult(AuthException.IncorrectCredentials())
         access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = self.__create_access_token(
-            data={"sub": user.id},
+            data={"sub": str(user.id)},
             expires_delta=access_token_expires
         )
         return ServiceResult({
@@ -47,13 +50,20 @@ class AuthService(BaseService):
             "token_type": "bearer"
         })
 
-    async def get_current_user(self):
+    def handle_token_verification(self, request: Request) -> ServiceResult:
+        token = request.headers.get("Authorization")
+        if not token:
+            return ServiceResult(AuthException.WrongToken())
+        token = token.split()[1]
+        return self.get_current_user(token)
+
+    def get_current_user(self, token: str):
         try:
-            payload = jwt.decode(self.oauth, SECRET_KEY, algorithms=[ALGORITHM])
-            id: int = payload.get("sub")
-            if id is None:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            user_id: int = payload.get("sub")
+            if not user_id:
                 return ServiceResult(AuthException.WrongToken())
-            token_data = TokenData(id=id)
+            token_data = TokenData(id=user_id)
         except JWTError:
             return ServiceResult(AuthException.WrongToken())
         user = self.users_repository.get_user(token_data.id)
@@ -64,9 +74,9 @@ class AuthService(BaseService):
     def __authenticate_user(self, username: str, password: str):
         user = self.users_repository.get_user_by_email(username)
         if not user:
-            return False
+            return None
         if not self.crypt_helper.verify_password(password, user.password):
-            return False
+            return None
         return user
 
     def __create_access_token(self, data: dict, expires_delta: Union[timedelta, None] = None):
