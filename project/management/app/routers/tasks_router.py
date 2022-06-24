@@ -4,9 +4,11 @@ from fastapi_utils.cbv import cbv
 
 from app.models.tasks.task_create import TaskCreate
 from app.models.tasks.task_update import TaskUpdate
+from app.models.users.user_details import User
 from app.repositories.tasks_repository import TasksRepository
 from app.services.tasks.tasks_service import TasksService
 from app.db.db import get_db
+from app.shared.decorators.auth_required import auth_current_user
 from app.shared.service_result import handle_result
 
 router = APIRouter()
@@ -28,38 +30,52 @@ class TasksRouter:
     @router.post("/")
     async def add_task(
             self,
-            task: TaskCreate
+            task: TaskCreate,
+            user: User = Depends(auth_current_user)
     ):
-        result = self.__service.add_task(0, task)
+        result = self.__service.add_task(user.id, task)
         return handle_result(result)
 
     @router.put("/")
     async def update_task(
             self,
-            task: TaskUpdate
+            task: TaskUpdate,
+            user: User = Depends(auth_current_user)
     ):
-        result = self.__service.update_task(0)
+        result = self.__service.update_task(user.id, task)
         return handle_result(result)
 
     @router.get("/")
     async def get_tasks(
-            self
+            self,
+            user: User = Depends(auth_current_user)
     ):
-        result = self.__service.get_tasks(0)
+        result = self.__service.get_tasks(user.id)
         return handle_result(result)
 
     @router.get("/{task_id}")
     async def get_task(
             self,
-            task_id: int
+            task_id: int,
+            user: User = Depends(auth_current_user)
     ):
-        result = self.__service.get_task(0, task_id)
+        result = self.__service.get_task(user.id, task_id)
         return handle_result(result)
 
     @router.delete("/{task_id}")
     async def delete_task(
             self,
-            task_id: int
+            task_id: int,
+            user: User = Depends(auth_current_user)
     ):
-        result = self.__service.remove_task(0, task_id)
+        result = self.__service.remove_task(user.id, task_id)
+        return handle_result(result)
+
+    @router.put("/{task_id}/share")
+    async def share_tasks(
+            self,
+            task: TaskUpdate,
+            user: User = Depends(auth_current_user)
+    ):
+        result = self.__service.update_task(user.id, task)
         return handle_result(result)

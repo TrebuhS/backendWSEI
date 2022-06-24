@@ -38,6 +38,7 @@ services:
       - ./management/:/app/
     environment:
       - DATABASE_URI=postgresql://management_db_username:management_db_password@management_db/management_db
+      - USERS_SERVICE_HOST_URL=http://users_service:8000/api/v1
 
   management_db:
     image: postgres:12.1-alpine
