@@ -18,24 +18,24 @@ class UsersService(BaseService):
             crypt_helper: CryptHelper
     ):
         super().__init__(db)
-        self.users_repository = users_repository
-        self.crypt_helper = crypt_helper
+        self.__users_repository = users_repository
+        self.__crypt_helper = crypt_helper
 
     def create_user(self, user: UserCreate) -> ServiceResult:
-        user.password = self.crypt_helper.get_password_hash(user.password)
-        new_user = self.users_repository.add_user(user)
+        user.password = self.__crypt_helper.get_password_hash(user.password)
+        new_user = self.__users_repository.add_user(user)
         if not new_user:
             return ServiceResult(UserException.WrongUserData())
         return ServiceResult(new_user)
 
     def get_user(self, user_id: int) -> ServiceResult:
-        user = self.users_repository.get_user(user_id)
+        user = self.__users_repository.get_user(user_id)
         if not user:
             return ServiceResult(UserException.NotFound())
         return ServiceResult(user)
 
     def get_user_by_email(self, user_email: str) -> ServiceResult:
-        user = self.users_repository.get_user_by_email(user_email)
+        user = self.__users_repository.get_user_by_email(user_email)
         if not user:
             return ServiceResult(UserException.NotFound())
         return ServiceResult(user)

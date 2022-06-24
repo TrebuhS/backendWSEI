@@ -6,4 +6,4 @@ class DBSessionMixin:
             self,
             db: Session
     ):
-        self.db = db
+        self._db = db

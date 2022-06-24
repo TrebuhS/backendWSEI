@@ -25,15 +25,15 @@ def get_users_service(db: Session = Depends(get_db)):
 @cbv(router)
 class UsersRouter:
 
-    db: Session = Depends(get_db)
-    service: UsersService = Depends(get_users_service)
+    __db: Session = Depends(get_db)
+    __service: UsersService = Depends(get_users_service)
 
     @router.post("/")
     async def create_user(
             self,
             user: UserCreate
     ):
-        result = self.service.create_user(user)
+        result = self.__service.create_user(user)
         return handle_result(result)
 
     @router.get("/{user_id}")
@@ -42,7 +42,7 @@ class UsersRouter:
             user_id: int,
             current_user: User = Depends(auth_current_user)
     ):
-        result = self.service.get_user(user_id)
+        result = self.__service.get_user(user_id)
         return handle_result(result)
 
     @router.get("/email/{user_email}")
@@ -51,5 +51,5 @@ class UsersRouter:
             user_email: str,
             current_user: User = Depends(auth_current_user)
     ):
-        result = self.service.get_user_by_email(user_email)
+        result = self.__service.get_user_by_email(user_email)
         return handle_result(result)

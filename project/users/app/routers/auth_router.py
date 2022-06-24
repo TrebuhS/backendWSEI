@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi_utils.cbv import cbv
 from sqlalchemy.orm import Session
 from starlette.requests import Request
 
@@ -12,7 +13,6 @@ from app.shared.service_result import handle_result
 
 router = APIRouter()
 
-
 def get_auth_service(db: Session = Depends(get_db)):
     return AuthService(
         db,
@@ -22,19 +22,24 @@ def get_auth_service(db: Session = Depends(get_db)):
     )
 
 
-@router.get("/")
-async def verify_token(
-        request: Request,
-        service=Depends(get_auth_service)
-):
-    result = service.handle_token_verification(request)
-    return handle_result(result)
+@cbv(router)
+class UsersRouter:
 
+    __db: Session = Depends(get_db)
+    __service: AuthService = Depends(get_auth_service)
 
-@router.post("/login")
-async def login_for_access_token(
-        form_data: OAuth2PasswordRequestForm = Depends(),
-        service=Depends(get_auth_service)
-):
-    result = service.login(form_data)
-    return handle_result(result)
+    @router.get("/")
+    async def verify_token(
+            self,
+            request: Request
+    ):
+        result = self.__service.handle_token_verification(request)
+        return handle_result(result)
+
+    @router.post("/login")
+    async def login_for_access_token(
+            self,
+            form_data: OAuth2PasswordRequestForm = Depends()
+    ):
+        result = self.__service.login(form_data)
+        return handle_result(result)

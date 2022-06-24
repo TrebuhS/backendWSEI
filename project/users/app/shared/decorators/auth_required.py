@@ -5,7 +5,6 @@ from app.db.db import get_db
 from app.routers.auth_router import get_auth_service
 from app.services.auth.auth_exception import AuthException
 from app.shared.app_request import AppRequest
-from app.shared.service_result import handle_result, ServiceResult
 
 
 def auth_current_user(request: AppRequest, db: Session = Depends(get_db)):
@@ -14,4 +13,3 @@ def auth_current_user(request: AppRequest, db: Session = Depends(get_db)):
     if not user_result.success:
         raise AuthException.WrongToken()
     return user_result.value
-

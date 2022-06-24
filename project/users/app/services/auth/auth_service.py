@@ -32,9 +32,9 @@ class AuthService(BaseService):
             crypt_helper: CryptHelper
     ):
         super().__init__(db)
-        self.users_repository = users_repository
-        self.oauth = oauth
-        self.crypt_helper = crypt_helper
+        self.__users_repository = users_repository
+        self.__oauth = oauth
+        self.__crypt_helper = crypt_helper
 
     def login(self, form_data: OAuth2PasswordRequestForm) -> ServiceResult:
         user = self.__authenticate_user(form_data.username, form_data.password)
@@ -55,9 +55,9 @@ class AuthService(BaseService):
         if not token:
             return ServiceResult(AuthException.WrongToken())
         token = token.split()[1]
-        return self.get_current_user(token)
+        return self.__get_current_user(token)
 
-    def get_current_user(self, token: str):
+    def __get_current_user(self, token: str):
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             user_id: int = payload.get("sub")
@@ -66,16 +66,16 @@ class AuthService(BaseService):
             token_data = TokenData(id=user_id)
         except JWTError:
             return ServiceResult(AuthException.WrongToken())
-        user = self.users_repository.get_user(token_data.id)
+        user = self.__users_repository.get_user(token_data.id)
         if not user:
             return ServiceResult(AuthException.WrongToken())
         return ServiceResult(user)
 
     def __authenticate_user(self, username: str, password: str):
-        user = self.users_repository.get_user_by_email(username)
+        user = self.__users_repository.get_user_by_email(username)
         if not user:
             return None
-        if not self.crypt_helper.verify_password(password, user.password):
+        if not self.__crypt_helper.verify_password(password, user.password):
             return None
         return user
 

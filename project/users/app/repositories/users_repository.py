@@ -12,13 +12,13 @@ class UsersRepository(BaseCRUD):
             email=user.email,
             password=user.password
         )
-        self.db.add(new_user)
-        self.db.commit()
-        self.db.refresh(new_user)
+        self._db.add(new_user)
+        self._db.commit()
+        self._db.refresh(new_user)
         return new_user
 
     def get_user(self, user_id: int):
-        return self.db.query(User).filter(User.id == user_id).first()
+        return self._db.query(User).filter(User.id == user_id).first()
 
     def get_user_by_email(self, email: str):
-        return self.db.query(User).filter(User.email == email).first()
+        return self._db.query(User).filter(User.email == email).first()
