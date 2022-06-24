@@ -39,6 +39,9 @@ class NotesRepository(BaseCRUD):
             .filter(Note.id == note_id)\
             .first()
 
-    def delete_note(self, note_id: int):
-        self._db.query(Note).filter(Note.id == note_id).delete()
+    def delete_note(self, user_id: int, note_id: int):
+        self._db.query(Note)\
+            .filter(Note.user_id == user_id)\
+            .filter(Note.id == note_id)\
+            .delete()
         self._db.commit()

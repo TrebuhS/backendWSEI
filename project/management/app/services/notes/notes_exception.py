@@ -1,19 +1,19 @@
 from app.shared.exceptions import AppExceptionCase
 
 
-class UserException:
+class NoteException:
     class NotFound(AppExceptionCase):
         def __init__(self, context: dict = None):
             """
-            User was not found
+            Note was not found
             """
             status_code = 404
             AppExceptionCase.__init__(self, status_code, context)
 
-    class WrongUserData(AppExceptionCase):
+    class WrongNoteData(AppExceptionCase):
         def __init__(self, context: dict = None):
             """
-            Wrong user data has been provided
+            Wrong note data has been provided
             """
             status_code = 400
             AppExceptionCase.__init__(self, status_code, context)

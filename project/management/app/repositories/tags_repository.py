@@ -14,12 +14,21 @@ class TagsRepository(BaseCRUD):
         self._db.commit()
         self._db.refresh(new_tag)
 
-    def get_tag(self, tag_id: int):
-        return self._db.query(Tag).filter(Tag.id == tag_id).first()
+    def get_tag(self, user_id: int, tag_id: int):
+        return self._db.query(Tag)\
+            .filter(Tag.user_id == user_id)\
+            .filter(Tag.id == tag_id)\
+            .first()
 
-    def delete_tag(self, tag_id: int):
-        self._db.query(Tag).filter(Tag.id == tag_id).delete()
+    def delete_tag(self, user_id: int, tag_id: int):
+        self._db.query(Tag)\
+            .filter(Tag.user_id == user_id)\
+            .filter(Tag.id == tag_id)\
+            .delete()
         self._db.commit()
 
-    def get_tags_by_ids(self, tags_ids: [int]):
-        self._db.query(Tag).filter(Tag.id.in_(tags_ids)).all()
+    def get_tags_by_ids(self, user_id: int, tags_ids: [int]):
+        self._db.query(Tag)\
+            .filter(Tag.user_id == user_id)\
+            .filter(Tag.id.in_(tags_ids))\
+            .all()

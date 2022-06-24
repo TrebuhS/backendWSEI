@@ -31,8 +31,8 @@ class TasksRepository(BaseCRUD):
         self._db.refresh(new_task)
 
     def update_task(self, user_id: int, task: TaskUpdate):
-        current_task = self.get_task(task.id)
-        if current_task.user_id is not user_id:
+        current_task = self.get_task(user_id, task.id)
+        if not current_task:
             return None
         current_task.content = task.content
         current_task.tags = self.__tags_repository.get_tags_by_ids(task.tags_ids)
@@ -46,6 +46,9 @@ class TasksRepository(BaseCRUD):
             .filter(Task.id == task_id)\
             .first()
 
-    def delete_task(self, task_id: int):
-        self._db.query(Task).filter(Task.id == task_id).delete()
+    def delete_task(self, user_id: int, task_id: int):
+        self._db.query(Task)\
+            .filter(Task.user_id == user_id)\
+            .filter(Task.id == task_id)\
+            .delete()
         self._db.commit()

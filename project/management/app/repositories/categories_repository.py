@@ -14,9 +14,15 @@ class CategoriesRepository(BaseCRUD):
         self._db.commit()
         self._db.refresh(new_category)
 
-    def get_category(self, category_id: int):
-        return self._db.query(Category).filter(Category.id == category_id).first()
+    def get_category(self, user_id: int, category_id: int):
+        return self._db.query(Category)\
+            .filter(Category.user_id == user_id)\
+            .filter(Category.id == category_id)\
+            .first()
 
-    def delete_category(self, category_id: int):
-        self._db.query(Category).filter(Category.id == category_id).delete()
+    def delete_category(self, user_id: int, category_id: int):
+        self._db.query(Category)\
+            .filter(Category.user_id == user_id)\
+            .filter(Category.id == category_id)\
+            .delete()
         self._db.commit()

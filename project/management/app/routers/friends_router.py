@@ -6,7 +6,7 @@ from app.models.tasks.task_create import UserCreate
 from app.models.tasks.task_details import User
 from app.repositories.tags_repository import FriendsRepository
 from app.repositories.categories_repository import UsersRepository
-from app.services.friends.friends_service import FriendsService
+from app.services.categories.categories_service import FriendsService
 from app.services.users.users_service import UsersService
 from app.db.db import get_db
 from app.shared.decorators.auth_required import auth_current_user

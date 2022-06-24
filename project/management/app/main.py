@@ -12,7 +12,7 @@ v1 = FastAPI()
 app.mount("/api/v1", v1)
 
 v1.include_router(users_router.router, prefix="/tasks")
-v1.include_router(friends_router.router, prefix="/tasks/friends")
+v1.include_router(friends_router.router, prefix="/tasks/categories")
 
 v1.include_router(auth_router.router, prefix="/auth")
 
