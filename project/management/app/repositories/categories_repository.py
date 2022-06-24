@@ -23,7 +23,7 @@ class CategoriesRepository(BaseCRUD):
     def get_categories(self, user_id: int):
         return self._db.query(Category)\
             .filter(Category.user_id == user_id)\
-            .first()
+            .all()
 
     def delete_category(self, user_id: int, category_id: int):
         self._db.query(Category)\

@@ -27,7 +27,7 @@ class CategoriesService(BaseService):
         return ServiceResult(category)
 
     def get_categories(self, user_id: int):
-        return self.__categories_repository.get_categories(user_id)
+        return ServiceResult(self.__categories_repository.get_categories(user_id))
 
     def remove_category(self, user_id: int, category_id: int):
         self.__categories_repository.delete_category(user_id, category_id)

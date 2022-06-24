@@ -33,6 +33,11 @@ class NotesRepository(BaseCRUD):
         self._db.commit()
         self._db.refresh(current_note)
 
+    def get_notes(self, user_id: int):
+        return self._db.query(Note)\
+            .filter(Note.user_id == user_id)\
+            .all()
+
     def get_note(self, user_id: int, note_id: int) -> Note:
         return self._db.query(Note)\
             .filter(Note.user_id == user_id)\

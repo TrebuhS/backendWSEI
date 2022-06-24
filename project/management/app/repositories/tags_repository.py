@@ -20,6 +20,11 @@ class TagsRepository(BaseCRUD):
             .filter(Tag.id == tag_id)\
             .first()
 
+    def get_tags(self, user_id: int):
+        return self._db.query(Tag)\
+            .filter(Tag.user_id == user_id)\
+            .all()
+
     def delete_tag(self, user_id: int, tag_id: int):
         self._db.query(Tag)\
             .filter(Tag.user_id == user_id)\

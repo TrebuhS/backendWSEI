@@ -17,7 +17,7 @@ class NotesService(BaseService):
         super().__init__(db)
         self.__notes_repository = notes_repository
 
-    def add_category(self, current_user_id: id, note: NoteCreate) -> ServiceResult:
+    def add_note(self, current_user_id: id, note: NoteCreate) -> ServiceResult:
         note = self.__notes_repository.add_note(current_user_id, note)
         return ServiceResult(note)
 
@@ -26,6 +26,9 @@ class NotesService(BaseService):
         if not note:
             return ServiceResult(NoteException.NotFound())
         return ServiceResult(note)
+
+    def get_notes(self, user_id: int):
+        return self.__notes_repository.get_notes(user_id)
 
     def update_note(self, user_id: id, note: NoteUpdate) -> ServiceResult:
         note = self.__notes_repository.update_note(user_id, note)
@@ -36,3 +39,4 @@ class NotesService(BaseService):
     def remove_note(self, user_id: int, note_id: int):
         self.__notes_repository.delete_note(user_id, note_id)
         return ServiceResult(True)
+

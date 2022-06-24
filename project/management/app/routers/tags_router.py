@@ -1,0 +1,56 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from fastapi_utils.cbv import cbv
+
+from app.models.tags.tag_create import TagCreate
+from app.repositories.tags_repository import TagsRepository
+from app.services.tags.tags_service import TagsService
+from app.db.db import get_db
+from app.shared.service_result import handle_result
+
+router = APIRouter()
+
+
+def get_tags_service(db: Session = Depends(get_db)):
+    return TagsService(
+        db,
+        TagsRepository(db)
+    )
+
+
+@cbv(router)
+class TagsRouter:
+
+    __db: Session = Depends(get_db)
+    __service: TagsService = Depends(get_tags_service)
+
+    @router.post("/")
+    async def add_tag(
+            self,
+            tag: TagCreate
+    ):
+        result = self.__service.add_tag(0, tag)
+        return handle_result(result)
+
+    @router.get("/")
+    async def get_tags(
+            self
+    ):
+        result = self.__service.get_tags(0)
+        return handle_result(result)
+
+    @router.get("/{tag_id}")
+    async def get_tag(
+            self,
+            tag_id: int
+    ):
+        result = self.__service.get_tag(0, tag_id)
+        return handle_result(result)
+
+    @router.delete("/{tag_id}")
+    async def delete_tag(
+            self,
+            tag_id: int
+    ):
+        result = self.__service.remove_tag(0, tag_id)
+        return handle_result(result)

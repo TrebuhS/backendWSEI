@@ -40,3 +40,19 @@ class CategoriesRouter:
     ):
         result = self.__service.get_categories(0)
         return handle_result(result)
+
+    @router.get("/{category_id}")
+    async def get_category(
+            self,
+            category_id: int
+    ):
+        result = self.__service.get_category(0, category_id)
+        return handle_result(result)
+
+    @router.delete("/{category_id}")
+    async def delete_category(
+            self,
+            category_id: int
+    ):
+        result = self.__service.remove_category(0, category_id)
+        return handle_result(result)

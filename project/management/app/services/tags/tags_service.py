@@ -19,14 +19,18 @@ class TagsService(BaseService):
         super().__init__(db)
         self.__tags_repository = tags_repository
 
-    def add_category(self, current_user_id: id, tag: TagCreate) -> ServiceResult:
+    def add_tag(self, current_user_id: id, tag: TagCreate) -> ServiceResult:
         tag = self.__tags_repository.add_tag(current_user_id, tag)
         return ServiceResult(tag)
 
-    def get_tag(self, user_id: id, tag_id: int) -> ServiceResult:
-        tag = self.__tags_repository.get_tag(user_id, tag_id)
+    def get_tag(self, current_user_id: id, tag_id: int) -> ServiceResult:
+        tag = self.__tags_repository.get_tag(current_user_id, tag_id)
         if not tag:
             return ServiceResult(TagException.NotFound())
+        return ServiceResult(tag)
+
+    def get_tags(self, current_user_id: id) -> ServiceResult:
+        tag = self.__tags_repository.get_tags(current_user_id)
         return ServiceResult(tag)
 
     def remove_tag(self, user_id: int, tag_id: int):

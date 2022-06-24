@@ -40,6 +40,11 @@ class TasksRepository(BaseCRUD):
         self._db.commit()
         self._db.refresh(current_task)
 
+    def get_tasks(self, user_id: int) -> Task:
+        return self._db.query(Task)\
+            .filter(Task.user_id == user_id)\
+            .all()
+
     def get_task(self, user_id: int, task_id: int) -> Task:
         return self._db.query(Task)\
             .filter(Task.user_id == user_id)\

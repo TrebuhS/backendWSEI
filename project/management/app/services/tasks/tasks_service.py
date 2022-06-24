@@ -17,7 +17,7 @@ class TasksService(BaseService):
         super().__init__(db)
         self.__tasks_repository = tasks_repository
 
-    def add_category(self, current_user_id: id, task: TaskCreate) -> ServiceResult:
+    def add_task(self, current_user_id: id, task: TaskCreate) -> ServiceResult:
         task = self.__tasks_repository.add_task(current_user_id, task)
         return ServiceResult(task)
 
@@ -26,6 +26,9 @@ class TasksService(BaseService):
         if not task:
             return ServiceResult(TaskException.NotFound())
         return ServiceResult(task)
+
+    def get_tasks(self, user_id: int):
+        return self.__tasks_repository.get_tasks(user_id)
 
     def update_task(self, user_id: id, task: TaskUpdate) -> ServiceResult:
         task = self.__tasks_repository.update_task(user_id, task)
