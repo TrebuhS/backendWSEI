@@ -20,6 +20,11 @@ class CategoriesRepository(BaseCRUD):
             .filter(Category.id == category_id)\
             .first()
 
+    def get_categories(self, user_id: int):
+        return self._db.query(Category)\
+            .filter(Category.user_id == user_id)\
+            .first()
+
     def delete_category(self, user_id: int, category_id: int):
         self._db.query(Category)\
             .filter(Category.user_id == user_id)\

@@ -1,8 +1,8 @@
-from sqlalchemy import (Column, Integer, String, Boolean, ForeignKey)
+from sqlalchemy import (Column, Integer, String, Boolean, ForeignKey, Table)
 from sqlalchemy.orm import relationship
 
 from app.db.db import Base
-from app.db.tables.task_tag import task_tag
+from app.db.tables import task_tag
 
 
 class Task(Base):
@@ -14,6 +14,3 @@ class Task(Base):
     is_done = Column(Boolean, default=False)
 
     category_id = Column(Integer, ForeignKey("categories.id"))
-    category = relationship("Category", back_populates="tasks")
-
-    tags = relationship("Tag", secondary=task_tag, back_populates="tasks")

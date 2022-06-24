@@ -10,5 +10,3 @@ class Category(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer)
     name = Column(String)
-
-    tasks = relationship("Task", back_populates="category")

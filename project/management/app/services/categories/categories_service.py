@@ -16,15 +16,18 @@ class CategoriesService(BaseService):
         super().__init__(db)
         self.__categories_repository = categories_repository
 
-    def add_category(self, current_user_id: id, category: CategoryCreate) -> ServiceResult:
+    def add_category(self, current_user_id: int, category: CategoryCreate) -> ServiceResult:
         category = self.__categories_repository.add_category(current_user_id, category)
         return ServiceResult(category)
 
-    def get_category(self, user_id: id, category_id: int) -> ServiceResult:
+    def get_category(self, user_id: int, category_id: int) -> ServiceResult:
         category = self.__categories_repository.get_category(user_id, category_id)
         if not category:
             return ServiceResult(CategoryException.NotFound())
         return ServiceResult(category)
+
+    def get_categories(self, user_id: int):
+        return self.__categories_repository.get_categories(user_id)
 
     def remove_category(self, user_id: int, category_id: int):
         self.__categories_repository.delete_category(user_id, category_id)

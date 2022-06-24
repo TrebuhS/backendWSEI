@@ -36,7 +36,7 @@ class CategoriesRouter:
 
     @router.get("/")
     async def get_categories(
-            self,
+            self
     ):
-        result = self.__service.get_category(0, category_id)
+        result = self.__service.get_categories(0)
         return handle_result(result)
