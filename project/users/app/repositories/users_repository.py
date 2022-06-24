@@ -1,3 +1,6 @@
+from sqlalchemy.orm import joinedload, subqueryload
+
+from app.db.tables.friends import user_friends
 from app.models.users.user_create import UserCreate
 from app.shared.base_crud import BaseCRUD
 from app.db.tables.user import User
@@ -18,7 +21,10 @@ class UsersRepository(BaseCRUD):
         return new_user
 
     def get_user(self, user_id: int):
-        return self._db.query(User).filter(User.id == user_id).first()
+        user = self._db.query(User)\
+            .filter(User.id == user_id)\
+            .first()
+        return user
 
     def get_user_by_email(self, email: str):
         return self._db.query(User).filter(User.email == email).first()

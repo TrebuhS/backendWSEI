@@ -1,4 +1,7 @@
-from sqlalchemy import (Table, Column, Integer, String)
+from sqlalchemy import (Table, Column, Integer, String, select)
+from sqlalchemy.orm import relationship
+
+from app.db.tables.friends import user_friends
 from app.db.db import Base
 
 
@@ -10,3 +13,10 @@ class User(Base):
     last_name = Column(String)
     email = Column(String, unique=True)
     password = Column(String)
+
+    friends = relationship(
+        "User",
+        secondary=user_friends,
+        primaryjoin=id == user_friends.c.friend_a_id,
+        secondaryjoin=id == user_friends.c.friend_b_id,
+    )

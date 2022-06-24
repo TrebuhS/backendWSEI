@@ -1,9 +1,7 @@
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.models.users.user_create import UserCreate
 from app.repositories.users_repository import UsersRepository
-from app.services.auth.auth_service import AuthService
 from app.services.users.user_exception import UserException
 from app.shared.base_service import BaseService
 from app.shared.helpers.crypt_helper import CryptHelper

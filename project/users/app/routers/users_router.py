@@ -36,6 +36,13 @@ class UsersRouter:
         result = self.__service.create_user(user)
         return handle_result(result)
 
+    @router.get("/me")
+    async def get_current_user(
+            self,
+            current_user: User = Depends(auth_current_user)
+    ):
+        return current_user
+
     @router.get("/{user_id}")
     async def get_user(
             self,

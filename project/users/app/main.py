@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from .db.db import create_tables
-from .routers import auth_router, users_router
+from .routers import auth_router, users_router, friends_router
 from .shared.exceptions import AppExceptionCase, app_exception_handler
 
 create_tables()
@@ -12,6 +12,8 @@ v1 = FastAPI()
 app.mount("/api/v1", v1)
 
 v1.include_router(users_router.router, prefix="/users")
+v1.include_router(friends_router.router, prefix="/users/friends")
+
 v1.include_router(auth_router.router, prefix="/auth")
 
 
