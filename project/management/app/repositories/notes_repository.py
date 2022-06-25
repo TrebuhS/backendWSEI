@@ -29,9 +29,11 @@ class NotesRepository(BaseCRUD):
         if not current_note:
             return None
         current_note.content = note.content
-        current_note.tags = self.__tags_repository.get_tags_by_ids(user_id, note.tags)
+        tags = self.__tags_repository.get_tags_by_ids(user_id, note.tags)
+        current_note.tags = tags
         self._db.commit()
         self._db.refresh(current_note)
+        return current_note
 
     def get_notes(self, user_id: int):
         return self._db.query(Note)\
