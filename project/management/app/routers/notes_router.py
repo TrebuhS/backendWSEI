@@ -6,6 +6,7 @@ from app.models.notes.note_create import NoteCreate
 from app.models.notes.note_update import NoteUpdate
 from app.models.users.user_details import User
 from app.repositories.notes_repository import NotesRepository
+from app.repositories.tags_repository import TagsRepository
 from app.services.notes.notes_service import NotesService
 from app.db.db import get_db
 from app.shared.decorators.auth_required import auth_current_user
@@ -15,9 +16,13 @@ router = APIRouter()
 
 
 def get_notes_service(db: Session = Depends(get_db)):
+    tags_repository = TagsRepository(db)
     return NotesService(
         db,
-        NotesRepository(db)
+        NotesRepository(
+            db,
+            tags_repository
+        )
     )
 
 
@@ -50,7 +55,7 @@ class NotesRouter:
             self,
             user: User = Depends(auth_current_user)
     ):
-        result = self.__service.get_notes(0)
+        result = self.__service.get_notes(user.id)
         return handle_result(result)
 
     @router.get("/{note_id}")

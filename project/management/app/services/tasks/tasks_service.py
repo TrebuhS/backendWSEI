@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy.orm import Session
 
 from app.models.tasks.task_create import TaskCreate
@@ -28,7 +30,7 @@ class TasksService(BaseService):
         return ServiceResult(task)
 
     def get_tasks(self, user_id: int):
-        return self.__tasks_repository.get_tasks(user_id)
+        return ServiceResult(self.__tasks_repository.get_tasks(user_id))
 
     def update_task(self, user_id: id, task: TaskUpdate) -> ServiceResult:
         task = self.__tasks_repository.update_task(user_id, task)
@@ -39,3 +41,6 @@ class TasksService(BaseService):
     def remove_task(self, user_id: int, task_id: int):
         self.__tasks_repository.delete_task(user_id, task_id)
         return ServiceResult(True)
+
+    def share_task(self, user_id, task_id: int, user_ids: List[int]):
+        return ServiceResult(self.__tasks_repository.share_task(user_id, task_id, user_ids))

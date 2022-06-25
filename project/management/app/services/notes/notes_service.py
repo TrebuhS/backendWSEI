@@ -28,7 +28,7 @@ class NotesService(BaseService):
         return ServiceResult(note)
 
     def get_notes(self, user_id: int):
-        return self.__notes_repository.get_notes(user_id)
+        return ServiceResult(self.__notes_repository.get_notes(user_id))
 
     def update_note(self, user_id: id, note: NoteUpdate) -> ServiceResult:
         note = self.__notes_repository.update_note(user_id, note)

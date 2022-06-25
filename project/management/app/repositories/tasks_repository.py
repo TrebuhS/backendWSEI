@@ -1,7 +1,10 @@
-from sqlalchemy.orm import Session
+from typing import List
+
+from sqlalchemy.orm import Session, joinedload
 
 from app.db.tables.category import Category
 from app.db.tables.task import Task
+from app.db.tables.task_shared_user import TaskSharedUser
 from app.models.tasks.task_create import TaskCreate
 from app.models.tasks.task_update import TaskUpdate
 from app.repositories.categories_repository import CategoriesRepository
@@ -35,10 +38,11 @@ class TasksRepository(BaseCRUD):
         if not current_task:
             return None
         current_task.content = task.content
-        current_task.tags = self.__tags_repository.get_tags_by_ids(task.tags_ids)
-        current_task.category = self.__categories_repository.get_category(task.category_id)
+        current_task.tags = self.__tags_repository.get_tags_by_ids(user_id, task.tags_ids)
+        current_task.category_id = self.__categories_repository.get_category(user_id, task.category_id).id
         self._db.commit()
         self._db.refresh(current_task)
+        return current_task
 
     def get_tasks(self, user_id: int) -> Task:
         return self._db.query(Task)\
@@ -49,6 +53,7 @@ class TasksRepository(BaseCRUD):
         return self._db.query(Task)\
             .filter(Task.user_id == user_id)\
             .filter(Task.id == task_id)\
+            .join()\
             .first()
 
     def delete_task(self, user_id: int, task_id: int):
@@ -57,3 +62,15 @@ class TasksRepository(BaseCRUD):
             .filter(Task.id == task_id)\
             .delete()
         self._db.commit()
+
+    def share_task(self, user_id: int, task_id: int, user_ids: List[int]):
+        task = self.get_task(user_id, task_id)
+        if not task:
+            return None
+        shared = map(lambda id: TaskSharedUser(
+            user_id=id,
+            task_id=task_id
+        ), user_ids)
+        self._db.add_all(shared)
+        self._db.commit()
+        self._db.refresh(task)

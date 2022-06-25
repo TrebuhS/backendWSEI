@@ -2,7 +2,6 @@ from sqlalchemy import (Column, Integer, String, Boolean, ForeignKey, Table)
 from sqlalchemy.orm import relationship
 
 from app.db.db import Base
-from app.db.tables import task_tag
 
 
 class Task(Base):
@@ -14,3 +13,7 @@ class Task(Base):
     is_done = Column(Boolean, default=False)
 
     category_id = Column(Integer, ForeignKey("categories.id"))
+    category = relationship("Category", back_populates="tasks")
+
+    shared = relationship("TaskSharedUser", back_populates="task")
+    tags = relationship("Tag", secondary="task_tag", back_populates="tasks", lazy="joined")

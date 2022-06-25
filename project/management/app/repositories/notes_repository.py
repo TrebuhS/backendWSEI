@@ -25,11 +25,11 @@ class NotesRepository(BaseCRUD):
         self._db.refresh(new_note)
 
     def update_note(self, user_id: int, note: NoteUpdate):
-        current_note = self.get_note(note.id)
-        if current_note.user_id is not user_id:
+        current_note = self.get_note(user_id, note.id)
+        if not current_note:
             return None
         current_note.content = note.content
-        current_note.tags = self.__tags_repository.get_tags_by_ids(note.tags)
+        current_note.tags = self.__tags_repository.get_tags_by_ids(user_id, note.tags)
         self._db.commit()
         self._db.refresh(current_note)
 

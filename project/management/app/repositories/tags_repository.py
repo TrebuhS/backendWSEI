@@ -33,7 +33,7 @@ class TagsRepository(BaseCRUD):
         self._db.commit()
 
     def get_tags_by_ids(self, user_id: int, tags_ids: [int]):
-        self._db.query(Tag)\
+        return self._db.query(Tag)\
             .filter(Tag.user_id == user_id)\
             .filter(Tag.id.in_(tags_ids))\
             .all()
